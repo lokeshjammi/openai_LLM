@@ -36,7 +36,7 @@ def travel_ticket_fare_calculator(destination_city: list[str]):
     for city in destination_city:
         city_lower = city.lower()
         if city_lower in ticket_fare:
-            result = ticket_fare[city_lower]
+            result[city_lower] = ticket_fare[city_lower]
         else:
             result[city_lower] = {"error": "The given city is not found in the database"}
     return result
@@ -89,18 +89,21 @@ def chat_with_model_with_history(query, history):
         if function_name == "check_price_of_ticket":
             destination_city = function_args.__getitem__("destination_city")
             response = travel_ticket_fare_calculator(destination_city=destination_city)
-            print(response)
-            ai_response_raw = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=history + user_query + [
-                    {
-                        "role": "function",
-                        "name": function_name,
-                        "content": f"Ticket fare details for city {destination_city} is {response.get('price')}"
-                    }
-                ]
-            )
-            ai_response = ai_response_raw.choices[0].message.content
+            response_list = list(response.values())
+            for i in range(len(response_list)):
+                city = function_args.get("destination_city")[i]
+                result = response_list[i]
+                ai_response_raw = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=history + user_query + [
+                        {
+                            "role": "function",
+                            "name": function_name,
+                            "content": f"Ticket fare details for city {city} is {result}"
+                        }
+                    ]
+                )
+                ai_response = ai_response_raw.choices[0].message.content
         else:
             print(f"Function {function_name} is not recognized.")
     else:
