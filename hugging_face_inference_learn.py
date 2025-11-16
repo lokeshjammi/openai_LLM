@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 import os
 from openai import OpenAI
-from transformers import pipeline
 
 
 load_dotenv(".env")
@@ -27,12 +26,3 @@ def learn_inference():
     )
 
     print(response.choices[0].message.content)
-
-def learn_pipeline():
-    pipe = pipeline(
-        task='text-generation',
-        model='openai-community/gpt2'
-    )
-    print(pipe("Can you explain me how pipeline works?"))
-
-learn_pipeline()
