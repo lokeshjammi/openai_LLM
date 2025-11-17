@@ -3,6 +3,7 @@ import os
 from openai import OpenAI
 
 
+
 load_dotenv(".env")
 client = OpenAI(
     base_url="https://router.huggingface.co/v1",
@@ -26,3 +27,5 @@ def learn_inference():
     )
 
     print(response.choices[0].message.content)
+
+learn_inference()
