@@ -86,16 +86,13 @@ def additional_context(user_message):
         result += "\n\n".join(relavent_context)
     return result
 
-user_message = "Who is carter? and what's his role"
-
-
 def chat(message, history):
-    system_message = SYSTEM_PREFIX + additional_context(user_message=user_message)
+    system_message = SYSTEM_PREFIX + additional_context(user_message=message)
     messages = [{"role": "system", "content": system_message}] + history + [{"role": "user", "content": message}]
     response = client.chat.completions.create(
         model="gpt-4.1-mini",
         messages=messages
     )
-    print(response.choices[0].message.content)
+    return response.choices[0].message.content
 
-view = gr.Chat
+view = gr.ChatInterface(chat).launch()
