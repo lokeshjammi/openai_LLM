@@ -1,3 +1,4 @@
+from operator import contains
 from webbrowser import Chrome
 from dotenv import load_dotenv
 import os
@@ -7,6 +8,7 @@ from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
+import numpy as np
 
 os.system('clear')
 load_dotenv('.env')
@@ -57,3 +59,7 @@ if os.path.exists(db_name):
     Chroma(persist_directory=db_name, embedding_function=embeddings).delete_collection()
 
 vector_store = Chroma.from_documents(documents=chunks, embedding=embeddings, persist_directory=db_name)
+collections = vector_store._collection
+sample_embedding = collections.get(include=["documents", "embeddings", "metadatas"])
+documents = sample_embedding['documents']
+meta_datas = sample_embedding["metadatas"]
