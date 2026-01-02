@@ -1,9 +1,12 @@
+from webbrowser import Chrome
 from dotenv import load_dotenv
 import os
 import glob
 import tiktoken
 from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_chroma import Chroma
 
 os.system('clear')
 load_dotenv('.env')
@@ -49,3 +52,8 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=20
 chunks = text_splitter.split_documents(documents)
 
 #Use a hugging face embeded model to encode the tokens
+embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2", model_kwargs={"device": "cpu"})
+if os.path.exists(db_name):
+    Chroma(persist_directory=db_name, embedding_function=embeddings).delete_collection()
+
+vector_store = Chroma.from_documents(documents=chunks, embedding=embeddings, persist_directory=db_name)
