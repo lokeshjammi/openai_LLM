@@ -1,5 +1,3 @@
-from operator import contains
-from webbrowser import Chrome
 from dotenv import load_dotenv
 import os
 import glob
@@ -9,8 +7,6 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 import numpy as np
-from sklearn.manifold import TSNE
-import plotly.graph_objects as go
 
 os.system('clear')
 load_dotenv('.env')
