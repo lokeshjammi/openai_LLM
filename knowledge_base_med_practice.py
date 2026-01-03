@@ -9,6 +9,8 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
 import numpy as np
+from sklearn.manifold import TSNE
+import plotly.graph_objects as go
 
 os.system('clear')
 load_dotenv('.env')
@@ -61,5 +63,6 @@ if os.path.exists(db_name):
 vector_store = Chroma.from_documents(documents=chunks, embedding=embeddings, persist_directory=db_name)
 collections = vector_store._collection
 sample_embedding = collections.get(include=["documents", "embeddings", "metadatas"])
+vector = np.array(sample_embedding["embeddings"])
 documents = sample_embedding['documents']
 meta_datas = sample_embedding["metadatas"]
