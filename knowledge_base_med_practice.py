@@ -33,6 +33,7 @@ for file_path in files:
 #Generate the token in all of the documents
 encoding = tiktoken.encoding_for_model(model)
 tokens = encoding.encode(entire_knowledge_base)
+print(tokens)
 
 #Load in everything in the knowledge_base using Langchain's loader
 folders = glob.glob("knowledge_base/*")
