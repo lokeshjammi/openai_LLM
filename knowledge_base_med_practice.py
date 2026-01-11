@@ -51,6 +51,7 @@ for folder in folders:
 
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 chunks = text_splitter.split_documents(documents)
+print(chunks)
 
 #Use a hugging face embeded model to encode the tokens
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2", model_kwargs={"device": "cpu"})
