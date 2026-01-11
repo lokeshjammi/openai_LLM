@@ -1,4 +1,3 @@
-from webbrowser import Chrome
 from dotenv import load_dotenv
 import os
 import glob
@@ -7,6 +6,7 @@ from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_chroma import Chroma
+import numpy as np
 
 os.system('clear')
 load_dotenv('.env')
@@ -33,6 +33,7 @@ for file_path in files:
 #Generate the token in all of the documents
 encoding = tiktoken.encoding_for_model(model)
 tokens = encoding.encode(entire_knowledge_base)
+print(tokens)
 
 #Load in everything in the knowledge_base using Langchain's loader
 folders = glob.glob("knowledge_base/*")
@@ -50,6 +51,7 @@ for folder in folders:
 
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 chunks = text_splitter.split_documents(documents)
+print(chunks)
 
 #Use a hugging face embeded model to encode the tokens
 embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2", model_kwargs={"device": "cpu"})
@@ -57,3 +59,8 @@ if os.path.exists(db_name):
     Chroma(persist_directory=db_name, embedding_function=embeddings).delete_collection()
 
 vector_store = Chroma.from_documents(documents=chunks, embedding=embeddings, persist_directory=db_name)
+collections = vector_store._collection
+sample_embedding = collections.get(include=["documents", "embeddings", "metadatas"])
+vector = np.array(sample_embedding["embeddings"])
+documents = sample_embedding['documents']
+meta_datas = sample_embedding["metadatas"]
