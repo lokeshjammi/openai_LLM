@@ -5,6 +5,7 @@ from openai import OpenAI
 from langchain_chroma import Chroma
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import SystemMessage, HumanMessage
+import gradio as gr
 
 os.system('clear')
 MODEL = "gpt-4.1-nano"
@@ -29,11 +30,11 @@ llm = ChatOpenAI(model=MODEL, temperature=0.2)
 System_instruction = """
 You are a helpful assistant who represent a company called insuretech that can answer questions about the documents in the knowledge base.
 if relavent use the context to answer the question.
+Say sorry in a meaningful way if the question is not related to the context.
 """
 
-def answer_question(query):
+def answer_question(query, history):
     docs = retriever.invoke(query)
-    print(len(docs))
     context = ""
     for doc in docs:
         context += doc.page_content
@@ -41,6 +42,6 @@ def answer_question(query):
     system_prompt = System_instruction+"\n\nContext: "+context
     # print(system_prompt)
     response = llm.invoke([SystemMessage(content=system_prompt), HumanMessage(content=query)])
-    # print(response.content)
+    return response.content
 
-answer_question("Who is carter?")
+view = gr.ChatInterface(answer_question).launch()
