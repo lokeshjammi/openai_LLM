@@ -13,4 +13,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY aws_bedrock_learning.py .
 
 # Command to run the script
-CMD ["python", "aws_bedrock_learning.py"]
+CMD ["python", "AWS/aws_bedrock_learning.py"]

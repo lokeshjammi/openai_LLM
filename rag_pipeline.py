@@ -4,7 +4,6 @@ from langchain_huggingface import HuggingFaceEmbeddings
 from openai import OpenAI
 from langchain_chroma import Chroma
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import SystemMessage, HumanMessage
 import gradio as gr
 
 os.system('clear')
@@ -33,15 +32,23 @@ if relavent use the context to answer the question.
 Say sorry in a meaningful way if the question is not related to the context.
 """
 
-def answer_question(query, history):
+def answer_question(query):
     docs = retriever.invoke(query)
     context = ""
     for doc in docs:
         context += doc.page_content
     # print(context)
     system_prompt = System_instruction+"\n\nContext: "+context
-    # print(system_prompt)
-    response = llm.invoke([SystemMessage(content=system_prompt), HumanMessage(content=query)])
-    return response.content
+    client = OpenAI(api_key=openai_api_key)
+    response = client.chat.completions.create(model=MODEL, messages=[{
+        "role": "system",
+        "content": system_prompt
+    }, 
+    {
+        "role": "user",
+        "content": query
+    }])
+    return response
 
-view = gr.ChatInterface(answer_question).launch()
+view = answer_question("Who is carter?")
+print(view.choices[0].message.content)

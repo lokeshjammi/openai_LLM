@@ -13,7 +13,9 @@ body = json.dumps({
             "role": "user",
             "content": "Hello! Can you tell me a short joke?"
         }
-    ]
+    ],
+    "accept": "application/json",
+    "contentType": "application/json"
 })
 
 response = client.invoke_model(
