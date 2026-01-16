@@ -6,6 +6,7 @@ model_id = "anthropic.claude-haiku-4-5-20251001-v1:0"
 
 body = json.dumps({
     "anthropic_version": "bedrock-2023-05-31",
+    "temprature": 0.5,
     "max_tokens": 500,
     "messages": [
         {
