@@ -1,7 +1,0 @@
-services:
-  bedrock-app:
-    build: .
-    env_file:
-      - .env
-    environment:
-      - AWS_DEFAULT_REGION=us-east-2
