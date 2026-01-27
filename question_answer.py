@@ -1,6 +1,7 @@
 from pathlib import Path
 from dotenv import load_dotenv
 import os
+from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain_chroma import Chroma
@@ -25,11 +26,10 @@ embedding = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2", model_kwargs={"
 vector_store = Chroma(persist_directory = VECTOR_DB, embedding_function=embedding)
 retriever = vector_store.as_retriever()
 
-llm = ChatOpenAI(model=MODEL, api_key=openai_key, temperature=0.2)
+client = ChatOpenAI(model=MODEL, api_key=openai_key, temperature=0.2)
 
 def fetch_context(query):
     context = retriever.invoke(query, k=K_RETREIVAL)
-    print(context)
     SYSTEM_PROMPT = f"""
         You're a knowledgeable, friendly assistance who represent a solar technology company.
         You're chatting with an user about solar related products and other related information only.
@@ -37,7 +37,14 @@ def fetch_context(query):
         If you don't know the answer, say so.
         Context: {context}
     """
-    System_prompt = SYSTEM_PROMPT.format(context)
+    print_llm_response(SYSTEM_PROMPT, query)
 
+def print_llm_response(system_prompt, user_query):
+    messages = [
+        SystemMessage(content=system_prompt),
+        HumanMessage(content=user_query)
+    ]
+    llm_response = client.invoke(messages)
+    print(llm_response.content)
 
 fetch_context("How to install solar panels?")
